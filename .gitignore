@@ -3,3 +3,5 @@ settings.py
 *.pyc
 *.code-workspace
 setting.json
+testapp/static/
+django_test/static/

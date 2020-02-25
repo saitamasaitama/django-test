@@ -1,10 +1,11 @@
-import copy
+from PIL import Image, ImageFilter
 BLACK = 1
 WHITE = -1
 STONE = {1:'BLACK', -1:'WHITE'}
 class Board:
+
     def __init__(self):
-        
+    
         self.cells = []
         for i in range(8):
             self.cells.append([None for i in range(8)])
@@ -15,6 +16,53 @@ class Board:
         self.cells[4][3] = BLACK
         self.cells[4][4] = WHITE
 
+    #盤面の状態を文字列として返す
+     #board_rendering
+    def board_rendering(self):
+        board = ""
+        for i in self.cells:
+            for cell in i:
+                if cell == WHITE:
+                    board += "○" #print("○", end=" ")
+                elif cell == BLACK:
+                    board +="●"#print("●", end=" ")
+                else:
+                    board +="*"#print("*", end=" ")
+            board +="\n"#print("\n", end="")
+        return board
+
+    def put_board_image(self,user_id):
+        im1 = Image.open('../testapp/static/testapp/オセロ.png')
+        black_stone = Image.open('../testapp/static/testapp/white.png')
+        print(f"im1:{im1}")
+        print(f"black_stone:{black_stone}")
+        white_stone = Image.open('../testapp/static/testapp/black.png')
+
+        back_im = im1.copy()
+
+        x = 0
+        y = 0
+        for i in self.cells:
+            for cell in i:
+                if cell == WHITE:
+                    cell_place1 = x * 128
+                    cell_place2 = y * 128
+                    print(cell_place1)
+                    print(cell_place2)
+                    back_im.paste(white_stone,(cell_place))
+                elif cell == BLACK:
+                    cell_place1 = x * 128
+                    cell_place2 = y * 128
+                    back_im.paste(black_stone,(cell_place))
+                y += 1
+            x += 1
+        
+        
+        back_im = im1.copy()
+        back_im.save(f'../testapp/static/testapp/{user_id}.png', quality=95)
+        #pngの名前はuser_id
+
+  
 
     def put(self, x, y, stone):
         flippable = self.list_flippable_disks(x, y, stone)
@@ -26,7 +74,6 @@ class Board:
 
 
     def show_board(self,turn):
-        
         board = ""
         board += str(turn) + "ターン目"
         #print("--" * 20)
@@ -58,7 +105,7 @@ class Board:
 
 
     
-    def list_possible_cells(self, stone):
+    def list_possible_cells(self, stone):#viewの中で呼ぶ
         possible = []
         for x in range(8):
             for y in range(8):
@@ -114,141 +161,15 @@ class Board:
         return flippable
     
 
+
 class Othello:
-    message=""
-    def mode_option(self,mode):
-        self.player1 = User(BLACK, "あなた")
-        self.player2 = Program(WHITE, "Mini-method")
-        message= "あなたは黒です"
+    board:Board = None
     
-        return message
-        
-    
-    def play(self):
-        board = Board()
-        turn = 1
-        pass_turn = 0
-
-        while(True):
-            board.show_board(turn)
-            black_count = 0
-            white_count = 0
-            for x in range(8):
-                for y in range(8):
-                    if board.cells[y][x] == BLACK:
-                        black_count+=1
-                    elif board.cells[y][x] == WHITE:
-                        white_count+=1
-
-            if (black_count + white_count == 64
-                or pass_turn == 2
-                or black_count == 0
-                or white_count == 0):
-                print("--" * 10+ "finished!!" + "--" * 10)
-                if black_count > white_count:
-                    print("WINNER BLACK!!")
-                if white_count > black_count:
-                    print("WINNER WHITE!!")
-                else:
-                    print("Draw")
-
-                print("results: " + "B:" + str(black_count) + ", W: " + str(white_count))
-
-                break
-
-            elif turn % 2 == 1:
-                stone = BLACK
-                possible = board.list_possible_cells(stone)
-                if possible == []:
-                    pass
-                else:
-                    divide = self.player1.main(possible)
-                    index = [0]
-                    return_board = divide[1]
-                    return  return_board
-
-            
-            elif turn % 2 == 0:
-                stone = WHITE
-                possible = board.list_possible_cells(stone)
-                if possible == []:
-                    pass
-                else:
-                    divide = self.player2.main(possible)
-                    index = [0]
-                    return  return_board
-
-            if possible == []:
-                print("pass")
-                pass_turn +=1
-                pass
-
-            else:
-                board.put(*possible[index],stone)
-                self.player1.copy_board(possible,index,stone)
-                self.player2.copy_board(possible,index,stone)
-                pass_turn = 0
-            
-            turn +=1
-    
-
-class BasePlayer:
-    def __init__(self,stone,name):
-        self.stone = stone
-        self.name = name
+    def play(self):#一番最初の盤面を出す
         self.board = Board()
-        self.copy_cells =[]
-
-
-    def copy_board(self,possible,index,stone):
-        self.board.put(*possible[index],stone)
-        self.copy_cells = copy.deepcopy(self.board.cells)
-    
-    def reset_board(self):
-        self.board.cells = copy.deepcopy(self.copy_cells)
-
-
-
-class User(BasePlayer):
-
-    def main(self, possible):
-        
-        '''print("player: "+ self.name + "(" + STONE[self.stone] + ")")
-        print("puto to: ",end ="")'''
-        board_return = ("あなた"+ self.name + "(" + STONE[self.stone] + ")"+"puto to: ")
-        for i in range(len(possible)-1):
-            print(str(i) + ":" + str(possible[i]), end=", ")
-        print(str(len(possible) -  1) + ":" + str(possible[len(possible)-1]))
-        confirm_list = []
-        index = 0
-        while(True):
-            index = int(input("choose:"))
-
-            for i in range (len(possible)):
-                confirm_list.append(i)
-            if index not in confirm_list:
-                print("そこには置けません")
-            else:
-                break
-
-
-        print("You put:" + str(possible[index]))
-        return index ,board_return
-    
-class Program(BasePlayer):
-
-    def main(self,possible):
-        '''print("player: "+ self.name + "(" + STONE[self.stone] + ")")
-        print("puto to: ",end ="")'''
-        for i in range(len(possible)-1):
-            print(str(i) + ":" + str(possible[i]), end=", ")
-        print(str(len(possible) -  1) + ":" + str(possible[len(possible)-1]))
-        index = 0
         
 
-
-        print("You put:" + str(possible[index]))
-        return index 
-
-if instance == None:
-    instance=Othello()
+othello_instance = Othello()
+reversi_instance = Board()
+test = Board()
+test.put_board_image("uuuuu")
