@@ -32,34 +32,40 @@ class Board:
         return board
 
     def put_board_image(self,user_id):
-        im1 = Image.open('../testapp/static/testapp/オセロ.png')
-        black_stone = Image.open('../testapp/static/testapp/white.png')
-        print(f"im1:{im1}")
-        print(f"black_stone:{black_stone}")
-        white_stone = Image.open('../testapp/static/testapp/black.png')
+        try:
+            im1 = Image.open('../testapp/static/testapp/オセロ.png')
+            black_stone = Image.open('../testapp/static/testapp/white.png')
+            print(f"im1:{im1}")
+            print(f"black_stone:{black_stone}")
+            white_stone = Image.open('../testapp/static/testapp/black.png')
 
-        back_im = im1.copy()
+            back_im = im1.copy()
 
-        x = 0
-        y = 0
-        for i in self.cells:
-            for cell in i:
-                if cell == WHITE:
-                    cell_place1 = x * 128
-                    cell_place2 = y * 128
-                    print(cell_place1)
-                    print(cell_place2)
-                    back_im.paste(white_stone,(cell_place))
-                elif cell == BLACK:
-                    cell_place1 = x * 128
-                    cell_place2 = y * 128
-                    back_im.paste(black_stone,(cell_place))
-                y += 1
-            x += 1
-        
-        
-        back_im = im1.copy()
-        back_im.save(f'../testapp/static/testapp/{user_id}.png', quality=95)
+            x = 0
+            for i in self.cells:
+                y = 0
+                print(f"i:{i}")
+                for cell in i:
+                    print(f"x,y:{x,y}")
+                    if cell == WHITE:
+                        cell_place1 = x * 128
+                        cell_place2 = y * 128
+                        print(cell_place1)
+                        print(cell_place2)
+
+                        back_im.paste(white_stone,(cell_place1,cell_place2))
+                    elif cell == BLACK:
+                        cell_place1 = x * 128
+                        cell_place2 = y * 128
+                        back_im.paste(black_stone,(cell_place1,cell_place2))  
+                    y += 1
+                x += 1
+            
+            
+            back_im = im1.copy()
+            back_im.save(f'../testapp/static/testapp/{user_id}.png', quality=95)
+        except Exception as e:
+            print(e)
         #pngの名前はuser_id
 
   
@@ -172,4 +178,5 @@ class Othello:
 othello_instance = Othello()
 reversi_instance = Board()
 test = Board()
-test.put_board_image("uuuuu")
+
+
