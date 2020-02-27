@@ -1,4 +1,6 @@
 from PIL import Image, ImageFilter
+from django_test.settings import BASE_DIR
+
 BLACK = 1
 WHITE = -1
 STONE = {1:'BLACK', -1:'WHITE'}
@@ -33,11 +35,18 @@ class Board:
 
     def put_board_image(self,user_id):
         try:
-            im1 = Image.open('../testapp/static/testapp/オセロ.png')
-            black_stone = Image.open('../testapp/static/testapp/white.png')
+            import os
+
+            print('getcwd:      ', os.getcwd())
+            print('__file__:    ', __file__)
+            #im1 = Image.open('../testapp/static/testapp/board.png')#パスわからないここでエラー
+            im1 = Image.open(BASE_DIR + "/testapp/static/testapp/board.png")
+            #black_stone = Image.open('../testapp/static/testapp/white.png')
+            black_stone = Image.open(BASE_DIR + "/testapp/static/testapp/black.png")
             print(f"im1:{im1}")
             print(f"black_stone:{black_stone}")
-            white_stone = Image.open('../testapp/static/testapp/black.png')
+            #white_stone = Image.open('../testapp/static/testapp/black.png')
+            white_stone = Image.open(BASE_DIR + "/testapp/static/testapp/white.png")
 
             back_im = im1.copy()
 
@@ -61,9 +70,8 @@ class Board:
                     y += 1
                 x += 1
             
-            
-            back_im = im1.copy()
-            back_im.save(f'../testapp/static/testapp/{user_id}.png', quality=95)
+        
+            back_im.save(BASE_DIR + f'/testapp/static/testapp/{user_id}', quality=95)
         except Exception as e:
             print(e)
         #pngの名前はuser_id
@@ -177,6 +185,6 @@ class Othello:
 
 othello_instance = Othello()
 reversi_instance = Board()
-test = Board()
+
 
 

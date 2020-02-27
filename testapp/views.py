@@ -3,8 +3,9 @@ from django.shortcuts import render
 from django.http.response import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-from pythonreversi.reversi import Othello
 from pythonreversi import reversi
+import os
+
 # Create your views here.
 
 
@@ -12,9 +13,11 @@ import base64
 import hashlib
 import hmac
 
-
+print('getcwd:      ', os.getcwd())
+print('__file__:    ', __file__)
 def index(request):
     return JsonResponse([1,2,3])
+
 
 
 
@@ -75,11 +78,13 @@ def verify_signature(signature_1,signature_2):
 
 
 def select_message(sended,user_id):
+
     return_message = ""
-   
     if sended == "オセロ":
+        print(user_id)
         reversi.othello_instance.play()
         return_message = reversi.othello_instance.board.board_rendering()
+        reversi.othello_instance.board.put_board_image(user_id)
         return_message += "どこに置きますか？"
         
     elif sended in '123456789':
