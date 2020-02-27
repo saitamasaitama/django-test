@@ -35,10 +35,6 @@ class Board:
 
     def put_board_image(self,user_id):
         try:
-            import os
-
-            print('getcwd:      ', os.getcwd())
-            print('__file__:    ', __file__)
             #im1 = Image.open('../testapp/static/testapp/board.png')#パスわからないここでエラー
             im1 = Image.open(BASE_DIR + "/testapp/static/testapp/board.png")
             #black_stone = Image.open('../testapp/static/testapp/white.png')

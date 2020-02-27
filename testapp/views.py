@@ -4,7 +4,6 @@ from django.http.response import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from pythonreversi import reversi
-import os
 
 # Create your views here.
 
@@ -13,8 +12,6 @@ import base64
 import hashlib
 import hmac
 
-print('getcwd:      ', os.getcwd())
-print('__file__:    ', __file__)
 def index(request):
     return JsonResponse([1,2,3])
 
