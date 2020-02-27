@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.http.response import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+import urllib.request
 from pythonreversi import reversi
 
 # Create your views here.
@@ -21,7 +22,6 @@ def index(request):
 @csrf_exempt
 def hello(request):
     json_open = open('setting.json', 'r')
-    
     json_load = json.load(json_open)
     print(json_load)
     channel_secret = json_load['LINE']['channel_secret'] # Channel secret string
@@ -52,7 +52,9 @@ def hello(request):
     print(f"あああ:{reply_reversi}")
     reply_message(token , reply_reversi,user_id)
     '''push_message("元気？")'''
-
+    print("qqqqqq")
+    user_information = get_user_infromation()
+    print(user_information)
     return confirm_message 
 
 def confirm_json_loads(body):
@@ -102,9 +104,6 @@ def select_message(sended,user_id):
     
 def reply_message(token , message, user_id):
 
-    import json
-    import urllib.request
-
     url = 'https://api.line.me/v2/bot/message/reply'
     print(url)
     data = {
@@ -115,8 +114,8 @@ def reply_message(token , message, user_id):
                 'text': message
             },
             {   'type' : 'image',
-                'originalContentUrl' : f'https://test.python-bot.saitamasaitama.com/testapp/static/testapp/{user_id}.png',
-                'previewImageUrl'    : f'https://test.python-bot.saitamasaitama.com/testapp/static/testapp/{user_id}.png'
+                'originalContentUrl' : f'https://test.python-bot.saitamasaitama.com/static/testapp/{user_id}.png',
+                'previewImageUrl'    : f'https://test.python-bot.saitamasaitama.com/static/testapp/{user_id}.png'
             }
         ]
     }
@@ -133,9 +132,6 @@ def reply_message(token , message, user_id):
     
 
 def push_message(message):
-
-    import json
-    import urllib.request
 
     url = 'https://api.line.me/v2/bot/message/push '
     data = {
@@ -158,7 +154,18 @@ def push_message(message):
         body = res.read()
     
 
-       
+def get_user_infromation():
 
+    url = f"https://api.line.me/v2/profile"
+    print(url)
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer vskFRXIrtpVwtBbBPUzf+Jw0kFQvboKzn5tKFlb6dApojbLBdsRTnnhA2uaDqgC0idK0Is8XcQX24N9nG/6b4GH8sqIWjtAvJBiIu4UgRUy7OIu0I7gVmECmD1KPvrRSVDs9jAEAzRZPOBeoAXtYVAdB04t89/1O/w1cDnyilFU='
+    }
 
+    
+    req = urllib.request.Request(url,)
+    with urllib.request.urlopen(req) as res:
+        body = res.read()
+    return body
 

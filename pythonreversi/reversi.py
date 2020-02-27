@@ -39,12 +39,15 @@ class Board:
             im1 = Image.open(BASE_DIR + "/testapp/static/testapp/board.png")
             #black_stone = Image.open('../testapp/static/testapp/white.png')
             black_stone = Image.open(BASE_DIR + "/testapp/static/testapp/black.png")
+            black_stone_r = black_stone.resize((75,75))
             print(f"im1:{im1}")
             print(f"black_stone:{black_stone}")
             #white_stone = Image.open('../testapp/static/testapp/black.png')
             white_stone = Image.open(BASE_DIR + "/testapp/static/testapp/white.png")
-
+            print(white_stone)
+            white_stone_r = white_stone.resize((75,75))
             back_im = im1.copy()
+            print(back_im)
 
             x = 0
             for i in self.cells:
@@ -53,21 +56,21 @@ class Board:
                 for cell in i:
                     print(f"x,y:{x,y}")
                     if cell == WHITE:
-                        cell_place1 = x * 128
-                        cell_place2 = y * 128
+                        cell_place1 = x * 105
+                        cell_place2 = y * 105
                         print(cell_place1)
                         print(cell_place2)
 
-                        back_im.paste(white_stone,(cell_place1,cell_place2))
+                        back_im.paste(white_stone_r,(cell_place1,cell_place2))
                     elif cell == BLACK:
-                        cell_place1 = x * 128
-                        cell_place2 = y * 128
-                        back_im.paste(black_stone,(cell_place1,cell_place2))  
+                        cell_place1 = x * 105
+                        cell_place2 = y * 105
+                        back_im.paste(black_stone_r,(cell_place1,cell_place2))  
                     y += 1
                 x += 1
             
-        
-            back_im.save(BASE_DIR + f'/testapp/static/testapp/{user_id}', quality=95)
+            print(back_im.save(BASE_DIR + f'/testapp/static/testapp/{user_id}.png', 'png'))
+            back_im.save(BASE_DIR + f'/testapp/static/testapp/{user_id}.png', 'png')
         except Exception as e:
             print(e)
         #pngの名前はuser_id
