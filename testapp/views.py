@@ -13,11 +13,6 @@ import base64
 import hashlib
 import hmac
 
-def index(request):
-    return JsonResponse([1,2,3])
-
-
-
 
 @csrf_exempt
 def hello(request):
@@ -48,8 +43,21 @@ def hello(request):
 
 
     return confirm_message 
-
 def confirm_json_loads(body):
+    """
+    json_loadsが動いているのかの確認
+
+    Args:
+        body str:
+            requestのjson文字列
+    
+    Return:
+        dict:
+            Seccess:json.loads(body)の返り値
+            Error:ログイン失敗のメッセージ
+            
+        
+    """
     try:
         return json.loads(body)
     except Exception as e:
@@ -58,7 +66,24 @@ def confirm_json_loads(body):
         message = JsonResponse({'message': 'Login failure.'}, status=403)
 
         return message
+
 def verify_signature(signature_1,signature_2):
+    """
+    lineシグネイチャーが一致するかの確認
+
+    Args:
+        signature_1 str:
+            ユーザーから送られてきたシグネイチャー
+        signature_2 str:
+            計算したシグネイチャー
+    
+    Return:
+        str:
+            二つのシグネイチャーがあってるかの確認をします
+            True:あっていないのでLoginfailure
+            False:あっているのでSuccess
+    """
+
     print(f"signature_1:{signature_1}")
     print(f"signature_2:{signature_2}")
     if signature_1 != signature_2:
@@ -69,6 +94,24 @@ def verify_signature(signature_1,signature_2):
 
 
 def select_message(sended,user_id,user_name):
+    """
+    ユーザーに送るメッセージを選びます
+
+    Args:
+        sended str:
+            ユーザーから送られてきたメッセージ
+
+        user_id str:
+            lineメッセージの送信者のuserid
+        
+        user_name str:
+            ユーザの名前
+
+        
+    Returns:
+        str:
+            選んだメッセージの文字列
+    """
 
     return_message = ""
     if sended == "オセロ":
@@ -98,6 +141,20 @@ def select_message(sended,user_id,user_name):
 
     
 def reply_message(token , message, user_id):
+    """
+    ユーザーに返答メッセージを送ります
+
+    Args:
+        token str:
+            lineトークン
+
+        message str:
+            select_message関数で返されたメッセージ
+        
+        user_id str:
+            メッセージ送信者のlineユーザid
+
+    """
 
     url = 'https://api.line.me/v2/bot/message/reply'
     print(url)
@@ -127,6 +184,13 @@ def reply_message(token , message, user_id):
     
 
 def push_message(message):
+    """
+    ユーザーにプッシュメッセージを送ります
+
+    Args:
+        message str:
+            プッシュメッセージの内容
+    """
 
     url = 'https://api.line.me/v2/bot/message/push '
     data = {
@@ -150,6 +214,17 @@ def push_message(message):
     
 
 def get_user_infromation(user_id):
+    """
+    ユーザ情報を取得(ex:ユーザ名,プロフィール画像など)
+
+    Args:
+        user_id str:
+            line送信者のuserid
+    
+    Return:
+        str:
+            ユーザ情報のjsonの文字列
+    """
 
     url = f"https://api.line.me/v2/bot/profile/{user_id}"
     print(url)

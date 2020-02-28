@@ -5,7 +5,7 @@ BLACK = 1
 WHITE = -1
 STONE = {1:'BLACK', -1:'WHITE'}
 class Board:
-
+    """オセロクラスはオセロの盤面を表示"""
     def __init__(self):
     
         self.cells = []
@@ -20,7 +20,14 @@ class Board:
 
     #盤面の状態を文字列として返す
      #board_rendering
-    '''def board_rendering(self):
+    def board_rendering(self):
+        """
+        現在の盤面を文字列で返す
+
+        Return:
+            str:
+                現在の盤面の文字列
+        """
         board = ""
         for i in self.cells:
             for cell in i:
@@ -31,11 +38,17 @@ class Board:
                 else:
                     board +="*"#print("*", end=" ")
             board +="\n"#print("\n", end="")
-        return board'''
+        return board
 
     
     def put_board_image(self,user_id):
-        """現在の盤面を画像で返す"""
+        """
+        現在の盤面ををpillowで作る
+
+        Args:
+            user_id str:
+                line送信者のuserid
+        """
         try:
             #im1 = Image.open('../testapp/static/testapp/board.png')#パスわからないここでエラー
             im1 = Image.open(BASE_DIR + "/testapp/static/testapp/board.png")
@@ -80,7 +93,20 @@ class Board:
   
 
     def put(self, x, y, stone):
-        """石をひっくり返す"""
+        """
+        石をひっくり返す
+
+        Args:
+            x int:
+                ユーザから選ばれたオセロのx座標
+            y int:
+                ユーザから選ばれたオセロのy座標
+            stone int:
+                -1なら白、１なら黒
+        
+        Return:
+            True bool:
+        """
         flippable = self.list_flippable_disks(x, y, stone)
         self.cells[y][x] = stone
         for x,y in flippable:
@@ -89,7 +115,14 @@ class Board:
         return True
 
     def count_stone(self):
-        """盤面の白と黒の枚数を返す"""
+        """
+        盤面の白と黒の枚数を返す
+
+        Return:
+            tuple:
+                white_countが白石の枚数でblack_countが黒石の枚数
+
+        """
         white_count = 0
         black_count = 0
         for i in self.cells:
@@ -102,41 +135,19 @@ class Board:
         black_count = str(black_count)
         return white_count,black_count
         
-
-    '''def show_board(self,turn):
-        board = ""
-        board += str(turn) + "ターン目"
-        #print("--" * 20)
-        #print(str(turn) + "ターン目")
-        #print("  ", end="")   
-        for i in range(8):
-           # print(i, end="")
-            board += str(i)
-            #print(" ", end="")
-       # print("\n", end="")
-        board += "\n"
-
-        j = 0
-        for i in self.cells:
-            board+= str(j)
-            #print(j, end="")
-            #print(" ", end="")
-            j += 1
-            for cell in i:
-                if cell == WHITE:
-                    board += "○" #print("○", end=" ")
-                elif cell == BLACK:
-                    board +="●"#print("●", end=" ")
-                else:
-                    board +="*"#print("*", end=" ")
-            board +="\n"#print("\n", end="")
-        
-        return board'''
-
-
     
     def list_possible_cells(self, stone):#
-        """置ける場所を返す"""
+        """
+        置ける場所を返す
+
+        Args:
+            stone int:
+                -1なら白、１なら黒
+        
+        Return:
+            list:
+                置ける場所x,yのタプルをリストで返す
+        """
         possible = []
         for x in range(8):
             for y in range(8):
@@ -150,7 +161,21 @@ class Board:
 
     
     def list_flippable_disks(self, x, y, stone):
-        """ひっくり返せる石を返す"""
+        """
+        ひっくり返せる石を探す
+
+        Args:
+            x int:
+                ユーザから選ばれたオセロのx座標
+            y int:
+                ユーザから選ばれたオセロのy座標
+            stone int:
+                -1なら白、１なら黒
+        
+        Return;
+            list:
+                ひっくり返せるx,y座標のタプルをリストで返す
+        """
         PREV = -1
         NEXT = 1
         DIRECTION = [PREV, 0, NEXT]
