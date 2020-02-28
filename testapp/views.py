@@ -23,38 +23,30 @@ def index(request):
 def hello(request):
     json_open = open('setting.json', 'r')
     json_load = json.load(json_open)
-    print(json_load)
-    channel_secret = json_load['LINE']['channel_secret'] # Channel secret string
+    channel_secret = json_load['LINE']['channel_secret']
     print(f"LINE_secret:{channel_secret}")
     request_body = request.body
     data = confirm_json_loads(request_body)
-    print(data)
-    #json.loads(request.body)
-    body = request.body.decode('utf-8') # Request body string
+    body = request.body.decode('utf-8')
     print(f"body:{body}")
     hash = hmac.new(channel_secret.encode('utf-8'),
         body.encode('utf-8'), hashlib.sha256).digest()
     signature = base64.b64encode(hash)
     print(f"calculated:{signature}")
-    # Compare X-Line-Signature request header and the signature
     Line_Signature = request.META.get('HTTP_X_LINE_SIGNATURE').encode()
     print(f"received_line:{Line_Signature}")
     confirm_message = verify_signature(signature,Line_Signature)#signatureが一致するかの確認
     print(confirm_message)
-    print('hello')
-    sended = data["events"][0]["message"]["text"]
-    
-    token = data["events"][0]["replyToken"]
-    print(request.body)
-    print(sended)
+    received = data["events"][0]["message"]["text"]
+    reply_token = data["events"][0]["replyToken"]
     user_id = data["events"][0]["source"]["userId"]
-    reply_reversi=select_message(sended,user_id)
-    print(f"あああ:{reply_reversi}")
-    reply_message(token , reply_reversi,user_id)
-    '''push_message("元気？")'''
-    print("qqqqqq")
-    user_information = get_user_infromation()
-    print(user_information)
+    user_information = get_user_infromation(user_id)
+    user_name = json.loads(user_information)
+    user_name = user_name['displayName']
+    selected_message = select_message(received,user_id,user_name)
+    reply_message(reply_token , selected_message, user_id)
+
+
     return confirm_message 
 
 def confirm_json_loads(body):
@@ -76,25 +68,28 @@ def verify_signature(signature_1,signature_2):
         return JsonResponse({'message': 'Success.'}, status=200)
 
 
-def select_message(sended,user_id):
+def select_message(sended,user_id,user_name):
 
     return_message = ""
     if sended == "オセロ":
+        user_name = user_name + "さん"
         print(user_id)
         reversi.othello_instance.play()
-        return_message = reversi.othello_instance.board.board_rendering()
         reversi.othello_instance.board.put_board_image(user_id)
-        return_message += "どこに置きますか？"
+        sum_stone = reversi.othello_instance.board.count_stone()
+        print(sum_stone)
+        white_stone = sum_stone[0]
+        black_stone = sum_stone[1]
+        return_message += f"白{white_stone}枚、黒{black_stone}枚です\n"
+        return_message += "どこに置きますか？\n"
+        return_message +=user_name
+
         
-    elif sended in '123456789':
+    elif int(sended) == int:
 
         sended = list(sended)
-        print(sended)
-        print(reversi.othello_instance)
         reversi.othello_instance.board.put(int(sended[0]),int(sended[1]),1)
         reversi.othello_instance.board.put_board_image(user_id)
-
-        return_message = reversi.othello_instance.board.board_rendering()
         
     else:
         return_message += "オセロを終了します"
@@ -154,9 +149,9 @@ def push_message(message):
         body = res.read()
     
 
-def get_user_infromation():
+def get_user_infromation(user_id):
 
-    url = f"https://api.line.me/v2/profile"
+    url = f"https://api.line.me/v2/bot/profile/{user_id}"
     print(url)
     headers = {
         'Content-Type': 'application/json',
@@ -164,7 +159,7 @@ def get_user_infromation():
     }
 
     
-    req = urllib.request.Request(url,)
+    req = urllib.request.Request(url,None,headers)
     with urllib.request.urlopen(req) as res:
         body = res.read()
     return body

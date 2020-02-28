@@ -25,7 +25,7 @@ SECRET_KEY = '8rgzask*n)sw1b%t3%28m+qmwp5s=sryhuz8k$!&-vy1okrco+'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['test.python-bot.saitamasaitama.com','0.0.0.0']
+ALLOWED_HOSTS = ['test.python-bot.saitamasaitama.com','0.0.0.0','13.115.157.144']
 
 
 # Application definition

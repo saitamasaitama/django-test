@@ -20,7 +20,7 @@ class Board:
 
     #盤面の状態を文字列として返す
      #board_rendering
-    def board_rendering(self):
+    '''def board_rendering(self):
         board = ""
         for i in self.cells:
             for cell in i:
@@ -31,9 +31,11 @@ class Board:
                 else:
                     board +="*"#print("*", end=" ")
             board +="\n"#print("\n", end="")
-        return board
+        return board'''
 
+    
     def put_board_image(self,user_id):
+        """現在の盤面を画像で返す"""
         try:
             #im1 = Image.open('../testapp/static/testapp/board.png')#パスわからないここでエラー
             im1 = Image.open(BASE_DIR + "/testapp/static/testapp/board.png")
@@ -78,6 +80,7 @@ class Board:
   
 
     def put(self, x, y, stone):
+        """石をひっくり返す"""
         flippable = self.list_flippable_disks(x, y, stone)
         self.cells[y][x] = stone
         for x,y in flippable:
@@ -85,8 +88,22 @@ class Board:
 
         return True
 
+    def count_stone(self):
+        """盤面の白と黒の枚数を返す"""
+        white_count = 0
+        black_count = 0
+        for i in self.cells:
+            for cell in i:
+                if cell == WHITE:
+                    white_count +=1
+                elif cell == BLACK:
+                    black_count += 1
+        white_count = str(white_count)
+        black_count = str(black_count)
+        return white_count,black_count
+        
 
-    def show_board(self,turn):
+    '''def show_board(self,turn):
         board = ""
         board += str(turn) + "ターン目"
         #print("--" * 20)
@@ -114,11 +131,12 @@ class Board:
                     board +="*"#print("*", end=" ")
             board +="\n"#print("\n", end="")
         
-        return board
+        return board'''
 
 
     
-    def list_possible_cells(self, stone):#viewの中で呼ぶ
+    def list_possible_cells(self, stone):#
+        """置ける場所を返す"""
         possible = []
         for x in range(8):
             for y in range(8):
@@ -132,6 +150,7 @@ class Board:
 
     
     def list_flippable_disks(self, x, y, stone):
+        """ひっくり返せる石を返す"""
         PREV = -1
         NEXT = 1
         DIRECTION = [PREV, 0, NEXT]
