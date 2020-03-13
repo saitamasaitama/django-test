@@ -4,7 +4,10 @@ from django.http.response import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 import urllib.request
+import re
+from django_test.settings import BASE_DIR
 from pythonreversi import reversi
+import torch
 
 # Create your views here.
 
@@ -43,7 +46,7 @@ def hello(request):
 
 
     return confirm_message 
-def confirm_json_loads(body):
+def confirm_json_loads(body:str)->dict:
     """
     json_loadsが動いているのかの確認
 
@@ -67,7 +70,7 @@ def confirm_json_loads(body):
 
         return message
 
-def verify_signature(signature_1,signature_2):
+def verify_signature(signature_1:str,signature_2:str)->str:
     """
     lineシグネイチャーが一致するかの確認
 
@@ -93,7 +96,7 @@ def verify_signature(signature_1,signature_2):
         return JsonResponse({'message': 'Success.'}, status=200)
 
 
-def select_message(sended,user_id,user_name):
+def select_message(sended:str,user_id:str,user_name:str)->str:
     """
     ユーザーに送るメッセージを選びます
 
@@ -114,10 +117,12 @@ def select_message(sended,user_id,user_name):
     """
 
     return_message = ""
-    if sended == "オセロ":
+    if sended == "オセロ": 
+        
         user_name = user_name + "さん"
         print(user_id)
-        reversi.othello_instance.play()
+        #reversi.othello_instance.play().board
+        print(f"オプジェクトの中身{reversi.othello_instance.play().board.cells}")
         reversi.othello_instance.board.put_board_image(user_id)
         sum_stone = reversi.othello_instance.board.count_stone()
         print(sum_stone)
@@ -128,10 +133,16 @@ def select_message(sended,user_id,user_name):
         return_message +=user_name
 
         
-    elif int(sended) == int:
-
-        sended = list(sended)
+    elif re.match("[0-7,0-7]",sended):
+        print("hello")
+        sended = sended.split(',')
+        print(int(sended[0]),int(sended[1]))
+        print(reversi.othello_instance.play())
         reversi.othello_instance.board.put(int(sended[0]),int(sended[1]),1)
+        #推論のための盤面を得たい
+        reversi.othello_instance.board.cells
+        print(f"盤面出したい{reversi.othello_instance.board.cells}")
+
         reversi.othello_instance.board.put_board_image(user_id)
         
     else:
@@ -140,7 +151,7 @@ def select_message(sended,user_id,user_name):
     return return_message
 
     
-def reply_message(token , message, user_id):
+def reply_message(token:str , message:str, user_id:str)->None:
     """
     ユーザーに返答メッセージを送ります
 
@@ -183,7 +194,7 @@ def reply_message(token , message, user_id):
         body = res.read()
     
 
-def push_message(message):
+def push_message(message:str)->None:
     """
     ユーザーにプッシュメッセージを送ります
 
@@ -213,7 +224,7 @@ def push_message(message):
         body = res.read()
     
 
-def get_user_infromation(user_id):
+def get_user_infromation(user_id:str)->str:
     """
     ユーザ情報を取得(ex:ユーザ名,プロフィール画像など)
 

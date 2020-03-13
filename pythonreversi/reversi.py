@@ -1,16 +1,17 @@
 from PIL import Image, ImageFilter
 from django_test.settings import BASE_DIR
+from typing import List, Dict, Tuple, Sequence
 
-BLACK = 1
-WHITE = -1
-STONE = {1:'BLACK', -1:'WHITE'}
+BLACK:int = 1
+WHITE:int = -1
+STONE:int = {1:'BLACK', -1:'WHITE'}
 class Board:
     """オセロクラスはオセロの盤面を表示"""
     def __init__(self):
     
-        self.cells = []
+        self.cells:List[list] = []
         for i in range(8):
-            self.cells.append([None for i in range(8)])
+            self.cells.append([0 for i in range(8)])
 
 
         self.cells[3][3] = WHITE
@@ -20,7 +21,7 @@ class Board:
 
     #盤面の状態を文字列として返す
      #board_rendering
-    def board_rendering(self):
+    def board_rendering(self)->str:
         """
         現在の盤面を文字列で返す
 
@@ -28,7 +29,7 @@ class Board:
             str:
                 現在の盤面の文字列
         """
-        board = ""
+        board:str = ""
         for i in self.cells:
             for cell in i:
                 if cell == WHITE:
@@ -41,7 +42,7 @@ class Board:
         return board
 
     
-    def put_board_image(self,user_id):
+    def put_board_image(self,user_id:str)->None:
         """
         現在の盤面ををpillowで作る
 
@@ -92,7 +93,7 @@ class Board:
 
   
 
-    def put(self, x, y, stone):
+    def put(self, x:int, y:int, stone:int)->bool:
         """
         石をひっくり返す
 
@@ -114,7 +115,7 @@ class Board:
 
         return True
 
-    def count_stone(self):
+    def count_stone(self)->Tuple[int,int]:
         """
         盤面の白と黒の枚数を返す
 
@@ -136,7 +137,7 @@ class Board:
         return white_count,black_count
         
     
-    def list_possible_cells(self, stone):#
+    def list_possible_cells(self, stone:int)->List[Tuple[int,int]]:
         """
         置ける場所を返す
 
@@ -160,7 +161,7 @@ class Board:
         return possible
 
     
-    def list_flippable_disks(self, x, y, stone):
+    def list_flippable_disks(self, x:int, y:int, stone:int)->List[Tuple[int,int]]:
         """
         ひっくり返せる石を探す
 
@@ -220,9 +221,15 @@ class Board:
 
 
 class Othello:
+    """
+    オセロをスタートするクラス
+    """
     board:Board = None
     
-    def play(self):#一番最初の盤面を出す
+    def play(self):
+        """
+        一番最初の盤面を出す
+        """
         self.board = Board()
         
 
